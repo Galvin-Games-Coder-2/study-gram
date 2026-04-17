@@ -1,0 +1,577 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans);background:var(--color-background-tertiary);color:var(--color-text-primary);min-height:100vh}
+input,textarea,select{font-family:var(--font-sans)}
+.hidden{display:none!important}
+#login-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:2rem}
+.login-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:2.5rem 2rem;width:100%;max-width:380px}
+.brand{text-align:center;margin-bottom:1.5rem}
+.brand-logo{width:48px;height:48px;background:#7F77DD;border-radius:12px;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;font-size:24px;color:#fff;font-weight:700}
+.brand h1{font-size:22px;font-weight:500}
+.brand p{font-size:13px;color:var(--color-text-secondary);margin-top:3px}
+.notice{background:var(--color-background-secondary);border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);padding:10px 14px;font-size:13px;color:var(--color-text-secondary);margin-bottom:1.2rem;line-height:1.6}
+.notice strong{color:var(--color-text-primary)}
+.domain-pill{display:inline-block;background:#EEEDFE;color:#534AB7;border-radius:20px;padding:1px 10px;font-size:12px;font-weight:500}
+.form-group{margin-bottom:1rem}
+.form-group label{display:block;font-size:13px;color:var(--color-text-secondary);margin-bottom:5px}
+.form-group input,.form-group select{width:100%;padding:10px 12px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);font-size:14px;background:var(--color-background-secondary);color:var(--color-text-primary)}
+.form-group input:focus,.form-group select:focus{outline:none;border-color:#7F77DD}
+.login-btn{width:100%;padding:11px;background:#7F77DD;color:#fff;border:none;border-radius:var(--border-radius-md);font-size:14px;font-weight:500;cursor:pointer;margin-top:4px}
+.login-btn:hover{background:#534AB7}
+.err-msg{color:#A32D2D;font-size:13px;margin-top:8px;text-align:center;background:#FCEBEB;padding:8px 12px;border-radius:var(--border-radius-md)}
+.divider{display:flex;align-items:center;gap:12px;margin:1.2rem 0;color:var(--color-text-tertiary);font-size:12px}
+.divider::before,.divider::after{content:'';flex:1;height:0.5px;background:var(--color-border-tertiary)}
+.link{color:#7F77DD;cursor:pointer}
+#register-screen{display:none;align-items:center;justify-content:center;min-height:100vh;padding:2rem}
+.back-link{display:flex;align-items:center;gap:4px;color:var(--color-text-secondary);font-size:13px;cursor:pointer;margin-bottom:1.2rem}
+
+#app-screen{display:flex;flex-direction:column;min-height:100vh;max-width:480px;margin:0 auto}
+.top-bar{position:sticky;top:0;z-index:100;background:var(--color-background-primary);border-bottom:0.5px solid var(--color-border-tertiary);padding:12px 16px;display:flex;align-items:center;justify-content:space-between}
+.top-bar .logo{font-size:18px;font-weight:500;color:var(--color-text-primary)}
+.top-bar .logo span{color:#7F77DD}
+.top-bar-icons{display:flex;gap:16px}
+.icon-btn{background:none;border:none;cursor:pointer;color:var(--color-text-primary);padding:4px;display:flex;align-items:center}
+.notif-dot{position:relative}
+.notif-dot::after{content:'3';position:absolute;top:-4px;right:-4px;background:#E24B4A;color:#fff;font-size:9px;width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center;line-height:16px;text-align:center}
+.stories-bar{background:var(--color-background-primary);border-bottom:0.5px solid var(--color-border-tertiary);padding:12px 16px;display:flex;gap:14px;overflow-x:auto;scrollbar-width:none}
+.stories-bar::-webkit-scrollbar{display:none}
+.story-item{display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;flex-shrink:0}
+.story-ring{width:58px;height:58px;border-radius:50%;padding:2.5px;background:linear-gradient(135deg,#7F77DD,#D4537E)}
+.story-ring.seen{background:var(--color-border-secondary)}
+.story-avatar{width:100%;height:100%;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;background:var(--color-background-secondary);border:2px solid var(--color-background-primary)}
+.story-name{font-size:11px;color:var(--color-text-secondary);max-width:62px;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.feed{flex:1;padding-bottom:80px}
+.post-card{background:var(--color-background-primary);border-bottom:0.5px solid var(--color-border-tertiary)}
+.post-header{display:flex;align-items:center;gap:10px;padding:12px 16px}
+.av{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.post-meta .uname{font-size:14px;font-weight:500}
+.post-meta .ptag{font-size:11px}
+.tag-pill{display:inline-block;background:var(--color-background-info);color:var(--color-text-info);padding:2px 8px;border-radius:20px}
+.post-img{width:100%;aspect-ratio:4/3;display:flex;align-items:center;justify-content:center;font-size:72px;background:var(--color-background-secondary)}
+.post-actions{display:flex;align-items:center;gap:14px;padding:10px 16px 6px}
+.act-btn{background:none;border:none;cursor:pointer;color:var(--color-text-primary);display:flex;align-items:center;gap:5px;font-size:13px;padding:0}
+.act-btn svg{width:22px;height:22px}
+.act-btn.liked{color:#E24B4A}
+.save-ml{margin-left:auto}
+.post-likes{padding:0 16px 4px;font-size:13px;font-weight:500}
+.post-cap{padding:0 16px 4px;font-size:14px;line-height:1.5}
+.cap-u{font-weight:500}
+.post-time{padding:0 16px 8px;font-size:11px;color:var(--color-text-tertiary)}
+.cmt-bar{display:flex;align-items:center;gap:10px;padding:8px 16px;border-top:0.5px solid var(--color-border-tertiary)}
+.cmt-input{flex:1;border:none;background:none;font-size:14px;color:var(--color-text-primary);outline:none}
+.cmt-submit{background:none;border:none;color:#7F77DD;font-size:13px;font-weight:500;cursor:pointer}
+.bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:var(--color-background-primary);border-top:0.5px solid var(--color-border-tertiary);display:flex;justify-content:space-around;padding:10px 0 16px;z-index:100}
+.nav-btn{display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;cursor:pointer;color:var(--color-text-secondary);font-size:10px;padding:4px 12px}
+.nav-btn.active{color:#7F77DD}
+.nav-btn svg{width:24px;height:24px}
+.panel{position:fixed;top:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;height:100vh;background:var(--color-background-primary);z-index:200;overflow-y:auto;padding-bottom:80px}
+.panel-hdr{display:flex;align-items:center;gap:12px;padding:16px;border-bottom:0.5px solid var(--color-border-tertiary);position:sticky;top:0;background:var(--color-background-primary);z-index:10}
+.back-btn{background:none;border:none;cursor:pointer;color:var(--color-text-primary);display:flex;align-items:center;padding:0}
+.panel-hdr h2{font-size:18px;font-weight:500}
+.profile-cover{height:110px;background:linear-gradient(135deg,#EEEDFE,#FBEAF0)}
+.prof-pic{width:72px;height:72px;border-radius:50%;border:3px solid var(--color-background-primary);display:flex;align-items:center;justify-content:center;font-size:32px;background:var(--color-background-secondary);margin-top:-36px;margin-left:16px}
+.profile-info{padding:8px 16px 16px}
+.prof-name{font-size:18px;font-weight:500}
+.prof-email{font-size:13px;color:var(--color-text-secondary);margin-top:2px}
+.grade-badge{display:inline-block;background:#FAEEDA;color:#854F0B;font-size:12px;padding:3px 10px;border-radius:20px;margin-top:6px}
+.domain-badge{display:inline-block;background:#EEEDFE;color:#534AB7;font-size:11px;padding:2px 8px;border-radius:20px;margin-left:6px}
+.prof-bio{font-size:14px;margin-top:8px;line-height:1.5}
+.prof-stats{display:flex;margin-top:14px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);overflow:hidden}
+.stat-b{flex:1;text-align:center;padding:12px 8px;border-right:0.5px solid var(--color-border-tertiary)}
+.stat-b:last-child{border-right:none}
+.stat-n{font-size:18px;font-weight:500}
+.stat-l{font-size:11px;color:var(--color-text-secondary);margin-top:2px}
+.edit-btn{width:100%;margin-top:14px;padding:9px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:none;font-size:14px;font-weight:500;cursor:pointer;color:var(--color-text-primary)}
+.post-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;margin-top:14px}
+.grid-p{aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:32px;background:var(--color-background-secondary);cursor:pointer}
+.sec-label{padding:12px 16px 4px;font-size:11px;color:var(--color-text-tertiary);font-weight:500;letter-spacing:0.5px;text-transform:uppercase}
+.set-row{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:0.5px solid var(--color-border-tertiary);cursor:pointer}
+.set-row:hover{background:var(--color-background-secondary)}
+.set-left{display:flex;align-items:center;gap:12px}
+.set-icon{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px}
+.set-title{font-size:14px;font-weight:500}
+.set-sub{font-size:12px;color:var(--color-text-secondary);margin-top:1px}
+.toggle{width:42px;height:24px;border-radius:12px;background:var(--color-border-secondary);position:relative;cursor:pointer;border:none;flex-shrink:0;transition:background 0.2s}
+.toggle.on{background:#7F77DD}
+.toggle::after{content:'';position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;transition:transform 0.2s}
+.toggle.on::after{transform:translateX(18px)}
+.danger{color:#E24B4A}
+.logout-row{display:flex;align-items:center;justify-content:center;padding:16px;margin-top:8px;cursor:pointer;color:#E24B4A;font-size:14px;font-weight:500;gap:8px}
+.notif-item{display:flex;align-items:flex-start;gap:10px;padding:12px 16px;border-bottom:0.5px solid var(--color-border-tertiary)}
+.notif-item.unread{background:var(--color-background-secondary)}
+.notif-av{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;background:var(--color-background-secondary)}
+.notif-txt{font-size:13px;line-height:1.5}
+.notif-t{font-size:11px;color:var(--color-text-tertiary);margin-top:2px}
+.notif-thumb{width:40px;height:40px;border-radius:4px;background:var(--color-background-secondary);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;margin-left:auto}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:300;display:flex;align-items:flex-end;justify-content:center}
+.sheet{background:var(--color-background-primary);border-radius:var(--border-radius-lg) var(--border-radius-lg) 0 0;width:100%;max-width:480px;padding:1.5rem 1.5rem 2.5rem}
+.handle{width:40px;height:4px;background:var(--color-border-secondary);border-radius:2px;margin:0 auto 1.5rem}
+.emoji-picker{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:1rem}
+.em-opt{width:44px;height:44px;border-radius:8px;border:0.5px solid var(--color-border-secondary);display:flex;align-items:center;justify-content:center;font-size:22px;cursor:pointer;background:var(--color-background-secondary)}
+.em-opt.sel{border-color:#7F77DD;background:#EEEDFE}
+.cap-ta{width:100%;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);padding:10px 12px;font-size:14px;background:var(--color-background-secondary);color:var(--color-text-primary);resize:none;height:80px}
+.cap-ta:focus{outline:none;border-color:#7F77DD}
+.tag-sel{display:flex;gap:8px;flex-wrap:wrap;margin:1rem 0}
+.tpill{padding:5px 12px;border-radius:20px;border:0.5px solid var(--color-border-secondary);font-size:12px;cursor:pointer;background:none;color:var(--color-text-primary)}
+.tpill.sel{background:#EEEDFE;border-color:#7F77DD;color:#534AB7}
+.share-btn{width:100%;padding:11px;background:#7F77DD;color:#fff;border:none;border-radius:var(--border-radius-md);font-size:14px;font-weight:500;cursor:pointer;margin-top:1rem}
+.share-btn:hover{background:#534AB7}
+.cancel-btn{width:100%;padding:10px;background:none;border:none;color:var(--color-text-secondary);font-size:14px;cursor:pointer;margin-top:6px}
+</style>
+
+<div id="login-screen">
+  <div class="login-card">
+    <div class="brand">
+      <div class="brand-logo">S</div>
+      <h1>Study<span style="color:#7F77DD">Gram</span></h1>
+      <p>The student social network</p>
+    </div>
+    <div class="notice">
+      <strong>Students only.</strong> Sign in with your WPS student email ending in <span class="domain-pill">@wpsstudent.org</span>. All other email addresses are blocked.
+    </div>
+    <div class="form-group">
+      <label>Full name</label>
+      <input id="l-name" type="text" placeholder="Your full name" />
+    </div>
+    <div class="form-group">
+      <label>School email</label>
+      <input id="l-email" type="email" placeholder="you@wpsstudent.org" />
+    </div>
+    <div class="form-group">
+      <label>Password</label>
+      <input id="l-pw" type="password" placeholder="••••••••" />
+    </div>
+    <div id="l-err" class="err-msg hidden"></div>
+    <button class="login-btn" onclick="doLogin()">Sign in</button>
+    <div class="divider">or</div>
+    <div style="text-align:center;font-size:13px;color:var(--color-text-secondary)">No account? <span class="link" onclick="showReg()">Create one</span></div>
+  </div>
+</div>
+
+<div id="register-screen">
+  <div class="login-card" style="max-width:400px">
+    <div class="back-link" onclick="showLogin()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><polyline points="15 18 9 12 15 6"/></svg>
+      Back to sign in
+    </div>
+    <div class="brand" style="margin-bottom:1.2rem">
+      <h1 style="font-size:18px">Create account</h1>
+      <p>Must use your <span class="domain-pill">@wpsstudent.org</span> email</p>
+    </div>
+    <div class="form-group">
+      <label>Full name</label>
+      <input id="r-name" type="text" placeholder="Your full name" />
+    </div>
+    <div class="form-group">
+      <label>Username</label>
+      <input id="r-user" type="text" placeholder="@username" />
+    </div>
+    <div class="form-group">
+      <label>School email</label>
+      <input id="r-email" type="email" placeholder="you@wpsstudent.org" />
+    </div>
+    <div class="form-group">
+      <label>Grade / Year</label>
+      <select id="r-grade">
+        <option value="">Select your grade</option>
+        <option>9th Grade</option><option>10th Grade</option>
+        <option>11th Grade</option><option>12th Grade</option>
+        <option>College – Year 1</option><option>College – Year 2</option>
+        <option>College – Year 3</option><option>College – Year 4+</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Password <span style="color:var(--color-text-tertiary)">(min 8 chars)</span></label>
+      <input id="r-pw" type="password" placeholder="••••••••" />
+    </div>
+    <div class="form-group">
+      <label>Confirm password</label>
+      <input id="r-pw2" type="password" placeholder="••••••••" />
+    </div>
+    <div id="r-err" class="err-msg hidden"></div>
+    <button class="login-btn" onclick="doRegister()">Create account</button>
+  </div>
+</div>
+
+<div id="app-screen" class="hidden">
+  <div class="top-bar">
+    <div class="logo">Study<span>Gram</span></div>
+    <div class="top-bar-icons">
+      <button class="icon-btn notif-dot" onclick="openPanel('pNotif')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="22" height="22"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+      </button>
+      <button class="icon-btn" onclick="openPanel('pDM')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="22" height="22"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      </button>
+    </div>
+  </div>
+  <div class="stories-bar" id="storiesBar"></div>
+  <div class="feed" id="feedEl"></div>
+  <div class="bottom-nav">
+    <button class="nav-btn active" id="nb-home" onclick="nav('home')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Home
+    </button>
+    <button class="nav-btn" id="nb-search" onclick="nav('search')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>Discover
+    </button>
+    <button class="nav-btn" id="nb-post" onclick="showNewPost()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>Post
+    </button>
+    <button class="nav-btn" id="nb-profile" onclick="openPanel('pProfile')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Profile
+    </button>
+    <button class="nav-btn" id="nb-settings" onclick="openPanel('pSettings')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Settings
+    </button>
+  </div>
+</div>
+
+<!-- Profile panel -->
+<div id="pProfile" class="panel hidden">
+  <div class="panel-hdr">
+    <button class="back-btn" onclick="closePanel('pProfile')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="22" height="22"><polyline points="15 18 9 12 15 6"/></svg></button>
+    <h2 id="pProfTitle">My Profile</h2>
+  </div>
+  <div class="profile-cover"></div>
+  <div class="prof-pic" id="pProfPic">😊</div>
+  <div class="profile-info">
+    <div class="prof-name" id="pProfName">Student Name</div>
+    <div class="prof-email" id="pProfEmail">you@wpsstudent.org</div>
+    <div><span class="grade-badge" id="pProfGrade">Grade</span><span class="domain-badge">wpsstudent.org</span></div>
+    <div class="prof-bio">Studying hard, posting harder. Coffee required ☕</div>
+    <div class="prof-stats">
+      <div class="stat-b"><div class="stat-n" id="statPosts">6</div><div class="stat-l">Posts</div></div>
+      <div class="stat-b"><div class="stat-n">284</div><div class="stat-l">Followers</div></div>
+      <div class="stat-b"><div class="stat-n">193</div><div class="stat-l">Following</div></div>
+    </div>
+    <button class="edit-btn">Edit profile</button>
+  </div>
+  <div class="post-grid" id="profGrid"></div>
+</div>
+
+<!-- Notifications panel -->
+<div id="pNotif" class="panel hidden">
+  <div class="panel-hdr">
+    <button class="back-btn" onclick="closePanel('pNotif')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="22" height="22"><polyline points="15 18 9 12 15 6"/></svg></button>
+    <h2>Notifications</h2>
+  </div>
+  <div id="notifList"></div>
+</div>
+
+<!-- DM panel -->
+<div id="pDM" class="panel hidden">
+  <div class="panel-hdr">
+    <button class="back-btn" onclick="closePanel('pDM')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="22" height="22"><polyline points="15 18 9 12 15 6"/></svg></button>
+    <h2>Messages</h2>
+  </div>
+  <div style="padding:16px"><input type="text" placeholder="Search classmates..." style="width:100%;padding:10px 12px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);font-size:14px;background:var(--color-background-secondary);color:var(--color-text-primary)" /></div>
+  <div id="dmList"></div>
+</div>
+
+<!-- Settings panel -->
+<div id="pSettings" class="panel hidden">
+  <div class="panel-hdr">
+    <button class="back-btn" onclick="closePanel('pSettings')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="22" height="22"><polyline points="15 18 9 12 15 6"/></svg></button>
+    <h2>Settings</h2>
+  </div>
+  <div class="sec-label">Account</div>
+  <div class="set-row"><div class="set-left"><div class="set-icon" style="background:#EEEDFE">👤</div><div><div class="set-title">Edit profile</div><div class="set-sub">Name, bio, avatar</div></div></div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="16" height="16"><polyline points="9 18 15 12 9 6"/></svg></div>
+  <div class="set-row"><div class="set-left"><div class="set-icon" style="background:#EAF3DE">🎓</div><div><div class="set-title">Grade & school</div><div class="set-sub" id="sGradeSub">Update your year</div></div></div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="16" height="16"><polyline points="9 18 15 12 9 6"/></svg></div>
+  <div class="set-row"><div class="set-left"><div class="set-icon" style="background:#FAEEDA">🔒</div><div><div class="set-title">Change password</div><div class="set-sub">Update credentials</div></div></div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="16" height="16"><polyline points="9 18 15 12 9 6"/></svg></div>
+  <div class="set-row"><div class="set-left"><div class="set-icon" style="background:#EEEDFE">✉️</div><div><div class="set-title">Verified email</div><div class="set-sub" id="sEmailSub">you@wpsstudent.org</div></div></div><span style="font-size:11px;background:#EAF3DE;color:#3B6D11;padding:2px 8px;border-radius:20px">Verified</span></div>
+
+  <div class="sec-label">Privacy</div>
+  <div class="set-row"><div class="set-left"><div class="set-icon" style="background:#E1F5EE">🔐</div><div><div class="set-title">Private account</div><div class="set-sub">Only followers see posts</div></div></div><button class="toggle" id="t-private" onclick="tog('private')"></button></div>
+  <div class="set-row"><div class="set-left"><div class="set-icon" style="background:#E1F5EE">🏫</div><div><div class="set-title">School-only mode</div><div class="set-sub">Posts limited to @wpsstudent.org</div></div></div><button class="toggle on" id="t-school" onclick="tog('school')"></button></div>
+  <div class="set-row"><div class="set-left"><div class="set-icon" style="background:#E1F5EE">💬</div><div><div class="set-title">Allow comments</div><div class="set-sub">Let others comment</div></div></div><button class="toggle on" id="t-comments" onclick="tog('comments')"></button></div>
+  <div class="set-row"><div class="set-left"><div class="set-icon" style="background:#E1F5EE">👁️</div><div><div class="set-title">Activity status</div><div class="set-sub">Show when you're online</div></div></div><button class="toggle on" id="t-activity" onclick="tog('activity')"></button></div>
+  <div class="set-row"><div class="set-left"><div class="set-icon" style="background:#E1F5EE">📧</div><div><div class="set-title">Show email to followers</div><div class="set-sub">Let classmates contact you</div></div></div><button class="toggle" id="t-email" onclick="tog('email')"></button></div>
+
+  <div class="sec-label">Notifications</div>
+  <div class="set-row"><div class="set-left"><div class="set-icon" style="background:#FBEAF0">❤️</div><div><div class="set-title">Likes</div></div></div><button class="toggle on" id="t-nl" onclick="tog('nl')"></button></div>
+  <div class="set-row"><div class="set-left"><div class="set-icon" style="background:#FBEAF0">💬</div><div><div class="set-title">Comments</div></div></div><button class="toggle on" id="t-nc" onclick="tog('nc')"></button></div>
+  <div class="set-row"><div class="set-left"><div class="set-icon" style="background:#FBEAF0">👋</div><div><div class="set-title">New followers</div></div></div><button class="toggle on" id="t-nf" onclick="tog('nf')"></button></div>
+  <div class="set-row"><div class="set-left"><div class="set-icon" style="background:#FBEAF0">📚</div><div><div class="set-title">Study group invites</div></div></div><button class="toggle on" id="t-ns" onclick="tog('ns')"></button></div>
+
+  <div class="sec-label">Content & Display</div>
+  <div class="set-row"><div class="set-left"><div class="set-icon" style="background:#E6F1FB">🎨</div><div><div class="set-title">Appearance</div><div class="set-sub">Light / dark / system</div></div></div><span style="font-size:13px;color:var(--color-text-secondary)">System</span></div>
+  <div class="set-row"><div class="set-left"><div class="set-icon" style="background:#E6F1FB">🌐</div><div><div class="set-title">Language</div></div></div><span style="font-size:13px;color:var(--color-text-secondary)">English</span></div>
+  <div class="set-row"><div class="set-left"><div class="set-icon" style="background:#E6F1FB">📌</div><div><div class="set-title">Saved posts</div></div></div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="16" height="16"><polyline points="9 18 15 12 9 6"/></svg></div>
+
+  <div class="sec-label">Safety & Support</div>
+  <div class="set-row"><div class="set-left"><div class="set-icon" style="background:#F1EFE8">🚨</div><div><div class="set-title">Report a problem</div><div class="set-sub">Bullying, spam, inappropriate</div></div></div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="16" height="16"><polyline points="9 18 15 12 9 6"/></svg></div>
+  <div class="set-row"><div class="set-left"><div class="set-icon" style="background:#F1EFE8">🛡️</div><div><div class="set-title">Blocked accounts</div></div></div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="16" height="16"><polyline points="9 18 15 12 9 6"/></svg></div>
+  <div class="set-row"><div class="set-left"><div class="set-icon" style="background:#F1EFE8">📋</div><div><div class="set-title">Community guidelines</div></div></div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="16" height="16"><polyline points="9 18 15 12 9 6"/></svg></div>
+
+  <div class="sec-label">Danger zone</div>
+  <div class="set-row"><div class="set-left"><div class="set-icon" style="background:#FCEBEB">🗑️</div><div><div class="set-title danger">Delete account</div><div class="set-sub">Permanently remove all data</div></div></div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="16" height="16"><polyline points="9 18 15 12 9 6"/></svg></div>
+  <div class="logout-row" onclick="doLogout()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="18" height="18"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Sign out
+  </div>
+</div>
+
+<!-- New post overlay -->
+<div id="newPostOverlay" class="overlay hidden">
+  <div class="sheet">
+    <div class="handle"></div>
+    <h2 style="font-size:16px;font-weight:500;margin-bottom:4px">Share something</h2>
+    <p style="font-size:13px;color:var(--color-text-secondary);margin-bottom:1rem">Pick a visual for your post</p>
+    <div class="emoji-picker" id="emojiPicker"></div>
+    <textarea class="cap-ta" id="postCap" placeholder="Write a caption..."></textarea>
+    <p style="font-size:12px;color:var(--color-text-secondary);margin-top:8px">Tag your post</p>
+    <div class="tag-sel" id="tagSel"></div>
+    <button class="share-btn" onclick="submitPost()">Share post</button>
+    <button class="cancel-btn" onclick="closeNewPost()">Cancel</button>
+  </div>
+</div>
+
+<script>
+const ALLOWED_DOMAIN = "wpsstudent.org";
+const BLOCKED_PFX = ["teacher","prof","dr.","mr.","mrs.","ms.","principal","admin","staff","faculty"];
+
+const emojis = ["📚","🧪","🎨","💻","🏀","🎵","🍕","🌿","🌍","✏️","🔬","🎭"];
+const postTags = ["homework help","study group","art","science","sports","music","class notes","events","career","memes"];
+const avatars = ["😊","🦁","🐼","🎃","🌻","🦊","🐸","🎯","🌈","🦋"];
+
+let user = {};
+let selEmoji = emojis[0];
+let selTags = new Set();
+let likes = {};
+
+const fakePosts = [
+  {id:1,user:"alexj",name:"Alex J.",av:"🦁",bg:"#EEEDFE",em:"📚",cap:"Finally finished the history essay 😮‍💨 three cups of coffee later",lk:34,tag:"homework help",t:"2h"},
+  {id:2,user:"maya_r",name:"Maya R.",av:"🌻",bg:"#EAF3DE",em:"🔬",cap:"Lab results were perfect 🎉 our photosynthesis hypothesis was actually right!!",lk:56,tag:"science",t:"4h"},
+  {id:3,user:"jchen99",name:"Jamie C.",av:"🐼",bg:"#E1F5EE",em:"💻",cap:"Built my first web app for CS class!! it's not much but it works #proud",lk:89,tag:"class notes",t:"5h"},
+  {id:4,user:"priya.s",name:"Priya S.",av:"🦋",bg:"#FBEAF0",em:"🎨",cap:"Art club project is coming together ✨ watercolor is hard but so relaxing",lk:112,tag:"art",t:"6h"},
+  {id:5,user:"tomw",name:"Tom W.",av:"🎯",bg:"#FAEEDA",em:"🏀",cap:"We won the inter-school basketball tournament!! 🏆 this team is everything",lk:203,tag:"sports",t:"7h"},
+];
+let posts = [...fakePosts];
+
+const stories = [
+  {n:"Your story",em:"➕",seen:false,add:true},
+  {n:"alexj",em:"🦁",seen:false},
+  {n:"maya_r",em:"🌻",seen:false},
+  {n:"jchen99",em:"🐼",seen:true},
+  {n:"priya.s",em:"🦋",seen:false},
+  {n:"tomw",em:"🎯",seen:true},
+];
+
+const notifs = [
+  {av:"🦁",txt:"<b>alexj</b> liked your post",t:"2m",unread:true,th:"📚"},
+  {av:"🌻",txt:"<b>maya_r</b> started following you",t:"15m",unread:true,th:null},
+  {av:"🐼",txt:"<b>jchen99</b> commented: \"so relatable 😂\"",t:"1h",unread:true,th:"📚"},
+  {av:"🦋",txt:"<b>priya.s</b> liked your post",t:"3h",unread:false,th:"✏️"},
+  {av:"🎯",txt:"<b>tomw</b> invited you to: <b>AP Physics study group</b>",t:"5h",unread:false,th:null},
+];
+
+const dms = [
+  {av:"🦁",nm:"alexj",prev:"yo are you coming to study hall?",t:"2m",u:2},
+  {av:"🌻",nm:"maya_r",prev:"can you send me the chem notes?",t:"1h",u:0},
+  {av:"🐼",nm:"jchen99",prev:"library at 5pm?",t:"3h",u:1},
+];
+
+function isValidEmail(email){
+  const e = email.toLowerCase().trim();
+  if(!e.endsWith("@"+ALLOWED_DOMAIN)) return false;
+  const local = e.split("@")[0];
+  for(const p of BLOCKED_PFX) if(local.startsWith(p)) return false;
+  return true;
+}
+
+function showLogin(){
+  document.getElementById("login-screen").style.display="flex";
+  document.getElementById("register-screen").style.display="none";
+}
+function showReg(){
+  document.getElementById("login-screen").style.display="none";
+  document.getElementById("register-screen").style.display="flex";
+}
+function showErr(id,msg){
+  const el=document.getElementById(id);
+  el.textContent=msg; el.classList.remove("hidden");
+}
+function hideErr(id){ document.getElementById(id).classList.add("hidden"); }
+
+function doLogin(){
+  hideErr("l-err");
+  const name=document.getElementById("l-name").value.trim();
+  const email=document.getElementById("l-email").value.trim();
+  const pw=document.getElementById("l-pw").value;
+  if(!name) return showErr("l-err","Please enter your full name.");
+  if(!email) return showErr("l-err","Please enter your school email.");
+  if(!isValidEmail(email)) return showErr("l-err","Only @wpsstudent.org student emails are allowed. Teachers and other staff cannot access StudyGram.");
+  if(pw.length<6) return showErr("l-err","Password must be at least 6 characters.");
+  user={name,email,grade:"11th Grade",av:avatars[Math.floor(Math.random()*avatars.length)]};
+  launch();
+}
+
+function doRegister(){
+  hideErr("r-err");
+  const name=document.getElementById("r-name").value.trim();
+  const email=document.getElementById("r-email").value.trim();
+  const grade=document.getElementById("r-grade").value;
+  const pw=document.getElementById("r-pw").value;
+  const pw2=document.getElementById("r-pw2").value;
+  if(!name||!email||!grade) return showErr("r-err","Please fill in all fields.");
+  if(!isValidEmail(email)) return showErr("r-err","Email must end in @wpsstudent.org. Teacher emails are not allowed.");
+  if(pw.length<8) return showErr("r-err","Password must be at least 8 characters.");
+  if(pw!==pw2) return showErr("r-err","Passwords do not match.");
+  user={name,email,grade,av:avatars[Math.floor(Math.random()*avatars.length)]};
+  launch();
+}
+
+function launch(){
+  document.getElementById("login-screen").style.display="none";
+  document.getElementById("register-screen").style.display="none";
+  document.getElementById("app-screen").classList.remove("hidden");
+  renderStories(); renderFeed(); renderProfile(); renderNotifs(); renderDMs(); setupNewPost();
+}
+
+function renderStories(){
+  document.getElementById("storiesBar").innerHTML=stories.map(s=>`
+    <div class="story-item" onclick="viewStory('${s.n}')">
+      <div class="story-ring ${s.seen?"seen":""}">
+        <div class="story-avatar">${s.em}</div>
+      </div>
+      <div class="story-name">${s.n}</div>
+    </div>`).join("");
+}
+
+function renderFeed(){
+  document.getElementById("feedEl").innerHTML=posts.map(p=>`
+    <div class="post-card">
+      <div class="post-header">
+        <div class="av" style="background:${p.bg}">${p.av}</div>
+        <div class="post-meta">
+          <div class="uname">${p.name}</div>
+          <div class="ptag"><span class="tag-pill">${p.tag}</span></div>
+        </div>
+        <button style="background:none;border:none;cursor:pointer;color:var(--color-text-secondary)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+        </button>
+      </div>
+      <div class="post-img">${p.em}</div>
+      <div class="post-actions">
+        <button class="act-btn ${likes[p.id]?"liked":""}" onclick="toggleLike(${p.id})">
+          <svg viewBox="0 0 24 24" fill="${likes[p.id]?"#E24B4A":"none"}" stroke="${likes[p.id]?"#E24B4A":"currentColor"}" stroke-width="1.8"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        </button>
+        <button class="act-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        </button>
+        <button class="act-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        </button>
+        <button class="act-btn save-ml">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+        </button>
+      </div>
+      <div class="post-likes" id="lk-${p.id}">${(p.lk+(likes[p.id]?1:0)).toLocaleString()} likes</div>
+      <div class="post-cap"><span class="cap-u">${p.user}</span> ${p.cap}</div>
+      <div class="post-time">${p.t} ago</div>
+      <div class="cmt-bar">
+        <div class="av" style="background:#EEEDFE;width:28px;height:28px;font-size:14px">${user.av||"😊"}</div>
+        <input class="cmt-input" placeholder="Add a comment..." />
+        <button class="cmt-submit">Post</button>
+      </div>
+    </div>`).join("");
+}
+
+function toggleLike(id){
+  likes[id]=!likes[id];
+  const btn=document.querySelector(`#lk-${id}`).parentElement.querySelector(".act-btn");
+  renderFeed();
+}
+
+function renderProfile(){
+  document.getElementById("pProfPic").textContent=user.av||"😊";
+  document.getElementById("pProfName").textContent=user.name||"Student";
+  document.getElementById("pProfEmail").textContent=user.email||"";
+  document.getElementById("pProfGrade").textContent=user.grade||"";
+  document.getElementById("pProfTitle").textContent=user.name||"Profile";
+  document.getElementById("sEmailSub").textContent=user.email||"";
+  document.getElementById("sGradeSub").textContent=user.grade||"";
+  document.getElementById("statPosts").textContent=posts.length;
+  document.getElementById("profGrid").innerHTML=posts.slice(0,9).map(p=>`<div class="grid-p">${p.em}</div>`).join("");
+}
+
+function renderNotifs(){
+  document.getElementById("notifList").innerHTML=notifs.map(n=>`
+    <div class="notif-item ${n.unread?"unread":""}">
+      <div class="notif-av">${n.av}</div>
+      <div style="flex:1"><div class="notif-txt">${n.txt}</div><div class="notif-t">${n.t}</div></div>
+      ${n.th?`<div class="notif-thumb">${n.th}</div>`:""}
+    </div>`).join("");
+}
+
+function renderDMs(){
+  document.getElementById("dmList").innerHTML=dms.map(d=>`
+    <div class="set-row">
+      <div class="set-left">
+        <div class="av" style="background:var(--color-background-secondary);width:44px;height:44px;font-size:22px;flex-shrink:0">${d.av}</div>
+        <div><div class="set-title">${d.nm}</div><div class="set-sub">${d.prev}</div></div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
+        <span style="font-size:11px;color:var(--color-text-tertiary)">${d.t}</span>
+        ${d.u?`<span style="background:#7F77DD;color:#fff;font-size:10px;padding:2px 7px;border-radius:20px">${d.u}</span>`:""}
+      </div>
+    </div>`).join("");
+}
+
+function setupNewPost(){
+  document.getElementById("emojiPicker").innerHTML=emojis.map((e,i)=>`<div class="em-opt ${i===0?"sel":""}" onclick="pickEmoji('${e}',this)">${e}</div>`).join("");
+  document.getElementById("tagSel").innerHTML=postTags.map(t=>`<button class="tpill" onclick="pickTag('${t}',this)">${t}</button>`).join("");
+}
+
+function pickEmoji(e,el){
+  selEmoji=e;
+  document.querySelectorAll(".em-opt").forEach(x=>x.classList.remove("sel"));
+  el.classList.add("sel");
+}
+function pickTag(t,el){
+  if(selTags.has(t)){selTags.delete(t);el.classList.remove("sel");}
+  else{selTags.add(t);el.classList.add("sel");}
+}
+
+function showNewPost(){ document.getElementById("newPostOverlay").classList.remove("hidden"); }
+function closeNewPost(){ document.getElementById("newPostOverlay").classList.add("hidden"); }
+
+function submitPost(){
+  const cap=document.getElementById("postCap").value.trim();
+  if(!cap){alert("Write a caption first!");return;}
+  const tag=selTags.size>0?[...selTags][0]:"general";
+  posts.unshift({id:Date.now(),user:user.name.toLowerCase().replace(/\s/g,""),name:user.name,av:user.av||"😊",bg:"#EEEDFE",em:selEmoji,cap,lk:0,tag,t:"just now"});
+  document.getElementById("postCap").value="";
+  selTags.clear();
+  document.querySelectorAll(".tpill").forEach(x=>x.classList.remove("sel"));
+  closeNewPost(); renderFeed(); renderProfile();
+}
+
+function openPanel(id){ document.getElementById(id).classList.remove("hidden"); }
+function closePanel(id){ document.getElementById(id).classList.add("hidden"); }
+
+function nav(tab){
+  document.querySelectorAll(".nav-btn").forEach(b=>b.classList.remove("active"));
+  document.getElementById("nb-"+tab).classList.add("active");
+}
+
+function tog(key){
+  const el=document.getElementById("t-"+key);
+  el.classList.toggle("on");
+}
+
+function viewStory(n){
+  stories.forEach(s=>{if(s.n===n)s.seen=true;});
+  renderStories();
+}
+
+function doLogout(){
+  closePanel("pSettings");
+  document.getElementById("app-screen").classList.add("hidden");
+  document.getElementById("login-screen").style.display="flex";
+  document.getElementById("l-name").value="";
+  document.getElementById("l-email").value="";
+  document.getElementById("l-pw").value="";
+  user={}; likes={}; posts=[...fakePosts];
+}
+</script>
